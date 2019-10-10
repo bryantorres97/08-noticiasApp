@@ -13,4 +13,8 @@ export class NoticiaComponent implements OnInit {
 
   ngOnInit() {}
 
+  abrirNoticia() {
+    console.log(this.noticia);
+  }
+
 }
