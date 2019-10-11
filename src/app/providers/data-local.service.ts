@@ -12,12 +12,19 @@ export class DataLocalService {
   constructor(private storage: Storage) { }
 
   guardarNoticia(noticia: Article) {
-    this.noticias.unshift( noticia );
-    this.storage.set('favoritos', this.noticias);
-    console.log('Guardando noticia');
+    const existe = this.noticias.find(news => news.title === noticia.title);
+    if (!existe) {
+      this.noticias.unshift(noticia);
+      this.storage.set('favoritos', this.noticias);
+
+    }
   }
 
-  cargarFavoritos() {
-
+  async cargarFavoritos() {
+    const favoritos = await this.storage.get('favoritos');
+    if (favoritos) {
+      console.log('async', favoritos);
+      this.noticias = favoritos;
+    }
   }
 }

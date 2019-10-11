@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { DataLocalService } from 'src/app/providers/data-local.service';
+import { Article } from 'src/app/interfaces/article.interface';
 
 @Component({
   selector: 'app-tab3',
@@ -6,7 +8,9 @@ import { Component } from '@angular/core';
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page {
-
-  constructor() {}
+  noticias: Article[] = [];
+  constructor(public dataLocal: DataLocalService) {
+    this.dataLocal.cargarFavoritos();
+  }
 
 }
