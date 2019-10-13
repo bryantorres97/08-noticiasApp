@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Article } from 'src/app/interfaces/article.interface';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, ToastController } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { DataLocalService } from 'src/app/providers/data-local.service';
 
@@ -14,6 +14,7 @@ import { DataLocalService } from 'src/app/providers/data-local.service';
 export class NoticiaComponent implements OnInit {
   @Input() noticia: Article;
   @Input() indice: number;
+  @Input() enFavoritos: boolean;
 
   options: InAppBrowserOptions = {
     location: 'yes', // Or 'no'
@@ -36,9 +37,12 @@ export class NoticiaComponent implements OnInit {
   constructor(private iab: InAppBrowser,
               public actionSheetController: ActionSheetController,
               private socialSharing: SocialSharing,
-              private dataLocal: DataLocalService) { }
+              private dataLocal: DataLocalService,
+              public toastController: ToastController) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log('En favoritos', this.enFavoritos);
+  }
 
   abrirNoticia() {
     console.log(this.noticia);
@@ -47,6 +51,31 @@ export class NoticiaComponent implements OnInit {
   }
 
   async mostrarMenu() {
+    let guardarBorrarOpcion;
+    if (this.enFavoritos) {
+      // Borrar favoritos
+      guardarBorrarOpcion = {
+        text: 'Borrar de favoritos',
+        icon: 'trash',
+        cssClass: 'acion-dark',
+        handler: () => {
+
+          this.dataLocal.borrarNoticia(this.noticia);
+          this.presentarMensaje('Tu noticia se ha borrado de favoritos');
+        }
+      };
+    } else {
+      guardarBorrarOpcion = {
+        text: 'Guardar en favoritos',
+        icon: 'bookmark',
+        cssClass: 'acion-dark',
+        handler: () => {
+
+          this.dataLocal.guardarNoticia(this.noticia);
+          this.presentarMensaje('Tu noticia se ha guardado en favoritos');
+        }
+      };
+    }
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: 'Compartir',
@@ -61,15 +90,9 @@ export class NoticiaComponent implements OnInit {
             this.noticia.url
           );
         }
-      }, {
-        text: 'Guardar en favoritos',
-        icon: 'star',
-        cssClass: 'acion-dark',
-        handler: () => {
-          console.log('Play clicked');
-          this.dataLocal.guardarNoticia(this.noticia);
-        }
-      }, {
+      },
+      guardarBorrarOpcion,
+      {
         text: 'Cancelar',
         icon: 'close',
         cssClass: 'acion-dark',
@@ -80,6 +103,14 @@ export class NoticiaComponent implements OnInit {
       }]
     });
     await actionSheet.present();
+  }
+
+  async presentarMensaje(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

@@ -7,5 +7,20 @@
 </ion-header>
 
 <ion-content color="dark">
-  <app-noticias [noticias]="dataLocal.noticias"></app-noticias>
+  <!-- <div *ngIf="dataLocal.noticias.length === 0">
+    No hay favoritos
+  </div> -->
+  <ion-slides [options]="sliderOptions" 
+  *ngIf="dataLocal.noticias.length === 0">
+    <ion-slide>
+      <!-- <ion-icon slot="icon-only" name="clipboard" id="icono"></ion-icon>       -->
+      <ion-card mode="ios">
+          <ion-icon slot="icon-only" name="clipboard" id="icono"></ion-icon> 
+        <ion-card-header>
+          <ion-card-subtitle>No se han agregado favoritos</ion-card-subtitle>          
+        </ion-card-header>     
+      </ion-card>
+    </ion-slide>   
+  </ion-slides>
+  <app-noticias *ngIf="dataLocal.noticias.length > 0" [noticias]="dataLocal.noticias" [enFavoritos]="true"></app-noticias>
 </ion-content>

@@ -8,7 +8,12 @@ import { Article } from 'src/app/interfaces/article.interface';
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page {
-  noticias: Article[] = [];
+
+  sliderOptions = {
+    allowSlidePrev: false,
+    allowSlideNext: false
+  };
+
   constructor(public dataLocal: DataLocalService) {
     this.dataLocal.cargarFavoritos();
   }
